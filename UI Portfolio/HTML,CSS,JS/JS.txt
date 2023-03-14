@@ -1,0 +1,61 @@
+var $navLinks = $('ul.nav > li a'),
+    $navElement = $('nav'),
+    scrollPos,
+    currRef,
+    navScrollPos = [];
+function setNavScrollPos() {
+    $navLinks.each(function(i,link) {
+        currRef = $(link).attr("href");
+        navScrollPos.push({
+            pos: $(currRef).position().top,
+            href: currRef
+        });
+    });
+    console.log(navScrollPos);
+}
+function setActiveNav(link) {
+    link
+        .closest('li')
+        .addClass('active')
+        .siblings()
+        .removeClass('active');
+}
+function onScroll() {
+    scrollPos = $(document).scrollTop();
+    if (scrollPos <= 0)
+        $navElement.removeClass('navbar-shrink');
+    else if (scrollPos >= 200)
+        $navElement.addClass('navbar-shrink');
+    for(var i=0,len=navScrollPos.length;i<len;i++) {
+        if (i<(len-1) && scrollPos < navScrollPos[i+1].pos) {
+            setActiveNav($('a[href='+navScrollPos[i].href+']'));
+            break;
+        } else if (i==(len-1) && scrollPos >= navScrollPos[i].pos) {
+            setActiveNav($('a[href='+navScrollPos[i].href+']'));
+            break;
+        }
+    }
+  
+        setActiveNav($('a[href='+navScrollPos['0']+']'));  
+    
+        setActiveNav($('a[href='+navScrollPos['384']+']')); 
+    
+      setActiveNav($('a[href='+navScrollPos['784']+']')); 
+    
+        setActiveNav($('a[href='+navScrollPos['1184']+']')); 
+}
+$(function() {
+    setNavScrollPos();
+    $navLinks.on('click', function(e) {
+        e.preventDefault();
+        currRef = $(this).attr('href');
+        $("html, body").animate({
+            scrollTop: $(currRef).position().top
+        }, 1000, 'easeOutExpo');
+        console.log(currRef);
+        console.log($(currRef).position().top);
+    });
+    $(document).on("scroll", function() {
+        setTimeout(onScroll,1000);
+    });
+});
